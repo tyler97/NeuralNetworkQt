@@ -31,7 +31,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::addPoint(Point p)
 {
-    if(p.Class == "1"){
+    if(p.Class == 1){
         qv_x1.append(p.x);
         qv_y1.append(p.y);
     }else{
@@ -81,11 +81,11 @@ void MainWindow::makePlot(){
 void MainWindow::clickedGraph(QMouseEvent *event)
 {
     QPoint point = event->pos();
-    QString Cl = "";
+    int Cl = -1;
     if(event->buttons() == Qt::RightButton){
-        Cl = "1";
+        Cl = 0;
     }else if(event->buttons() == Qt::LeftButton){
-        Cl = "2";
+        Cl = 1;
     }
 
     Point myPoint(ui->customPlot->xAxis->pixelToCoord(point.x()),ui->customPlot->yAxis->pixelToCoord(point.y()),Cl);
