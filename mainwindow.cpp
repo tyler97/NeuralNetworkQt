@@ -89,7 +89,6 @@ void MainWindow::clickedGraph(QMouseEvent *event)
     }
 
     Point myPoint(ui->customPlot->xAxis->pixelToCoord(point.x()),ui->customPlot->yAxis->pixelToCoord(point.y()),Cl);
-    //qDebug() << ui->customPlot->xAxis->pixelToCoord(point.x()) << ui->customPlot->yAxis->pixelToCoord(point.y());
     addPoint(myPoint);
     plot();
 }

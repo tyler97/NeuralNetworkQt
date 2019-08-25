@@ -27,11 +27,13 @@ CONFIG += c++11
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
+        perceptron.cpp \
         point.cpp \
         qcustomplot.cpp
 
 HEADERS += \
         mainwindow.h \
+        perceptron.h \
         point.h \
         qcustomplot.h
 
