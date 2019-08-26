@@ -1,5 +1,6 @@
 #include "perceptron.h"
 #include "point.h"
+#include <QDebug>
 
 Perceptron::Perceptron()
 {
@@ -27,5 +28,6 @@ void Perceptron::rand(){
 void Perceptron::update(Point i,double factor,int error){
     w1 = w1 + (i.x * factor * error);
     w2 = w2 + (i.y * factor * error);
-    wb = wb + (i.Class * factor * error);
+    wb = wb + (-1 * factor * error);
+    qDebug() << w1  << " " << w2 << " " << wb;
 }

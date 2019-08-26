@@ -79,7 +79,7 @@ void MainWindow::clearData()
     qv_y1.clear();
     qv_y2.clear();
 
-
+    pointVector.clear();
     clearError();
 
 }
