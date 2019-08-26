@@ -73,6 +73,52 @@
      <string>Limpiar</string>
     </property>
    </widget>
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>400</x>
+      <y>120</y>
+      <width>91</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string># Maximo Epocas</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_2">
+    <property name="geometry">
+     <rect>
+      <x>400</x>
+      <y>150</y>
+      <width>91</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>                  factor</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="inputG">
+    <property name="geometry">
+     <rect>
+      <x>490</x>
+      <y>120</y>
+      <width>113</width>
+      <height>20</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="inputF">
+    <property name="geometry">
+     <rect>
+      <x>490</x>
+      <y>150</y>
+      <width>113</width>
+      <height>20</height>
+     </rect>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">

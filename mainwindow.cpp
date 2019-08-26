@@ -91,6 +91,7 @@ void MainWindow::clearError(){
 
     errorX.clear();
     errorY.clear();
+    count = 0;
 }
 
 void MainWindow::plot()
@@ -172,12 +173,18 @@ void MainWindow::plotError(){
 void MainWindow::on_btnCorrer_clicked()
 {
     clearError();
+    QString fString = ui->inputF->text();
+    QString GS = ui->inputG->text();
 
-    double factor = 0.5;
+    double factor = fString.toDouble();
+    int G = GS.toInt();
+
+    ui->errorPlot->xAxis->setRange(0,G);
+
     bool done = false;
     int error;
     int cont;
-    while(!done){
+    for(int r = 0; r < G; r++){
         done = true;
         cont = 0;
 
@@ -198,6 +205,10 @@ void MainWindow::on_btnCorrer_clicked()
         plotError();
         plot();
         //QThread::sleep(1);
+
+        if(done){
+            break;
+        }
 
     }
 
