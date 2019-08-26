@@ -1,4 +1,5 @@
 #include "perceptron.h"
+#include "point.h"
 
 Perceptron::Perceptron()
 {
@@ -15,4 +16,16 @@ int Perceptron::functionZ(double x1, double x2)
     }
     return 0;
 
+}
+
+void Perceptron::rand(){
+    w1 = Gen.bounded(20.0) - 10.0;
+    w2 = Gen.bounded(20.0) - 10.0;
+    wb = Gen.bounded(20.0) - 10.0;
+}
+
+void Perceptron::update(Point i,double factor,int error){
+    w1 = w1 + (i.x * factor * error);
+    w2 = w2 + (i.y * factor * error);
+    wb = wb + (i.Class * factor * error);
 }

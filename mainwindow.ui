@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>628</width>
-    <height>300</height>
+    <width>639</width>
+    <height>401</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -24,13 +24,62 @@
      </rect>
     </property>
    </widget>
+   <widget class="QPushButton" name="btnInit">
+    <property name="geometry">
+     <rect>
+      <x>440</x>
+      <y>20</y>
+      <width>131</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Initializar Pesos</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btnCorrer">
+    <property name="geometry">
+     <rect>
+      <x>440</x>
+      <y>50</y>
+      <width>131</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Perceptron</string>
+    </property>
+   </widget>
+   <widget class="QCustomPlot" name="errorPlot" native="true">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>220</y>
+      <width>381</width>
+      <height>121</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btnClean">
+    <property name="geometry">
+     <rect>
+      <x>440</x>
+      <y>80</y>
+      <width>131</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Limpiar</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>628</width>
+     <width>639</width>
      <height>21</height>
     </rect>
    </property>
