@@ -32,6 +32,8 @@ private slots:
 
     void on_btnClean_clicked();
 
+    void on_btnCorrer2_clicked();
+
 private:
 
     Ui::MainWindow *ui;

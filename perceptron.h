@@ -14,6 +14,8 @@ public:
     int functionZ(double,double);
     void rand();
     void update(Point i, double factor, int error);
+    void updateA(Point i, double factor, double error);
+    double functionS(double x1, double x2);
 };
 
 #endif // PERCEPTRON_H

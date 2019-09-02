@@ -33,7 +33,7 @@ MainWindow::MainWindow(QWidget *parent) :
     // error graph
     ui->errorPlot->addGraph();
     ui->errorPlot->xAxis->setRange(0,200);
-    ui->errorPlot->yAxis->setRange(0,10);
+    ui->errorPlot->yAxis->setRange(0,5);
 
 
 
@@ -217,4 +217,46 @@ void MainWindow::on_btnCorrer_clicked()
 void MainWindow::on_btnClean_clicked()
 {
     clearData();
+}
+
+void MainWindow::on_btnCorrer2_clicked()
+{
+    clearError();
+    QString fString = ui->inputF->text();
+    QString GS = ui->inputG->text();
+
+    double factor = fString.toDouble();
+    int G = GS.toInt();
+
+    ui->errorPlot->xAxis->setRange(0,G);
+
+    double error;
+    double cont;
+    for(int r = 0; r < G; r++){
+
+        cont = 0.0;
+
+        for(int i=0; i < pointVector.size(); i++){
+
+            //qDebug() << percept.functionS(pointVector[i].x,pointVector[i].y);
+            error = double(pointVector[i].Class) - percept.functionS(pointVector[i].x,pointVector[i].y);
+            percept.updateA(pointVector[i],factor,error);
+            //qDebug() << error;
+            cont += error * error;
+
+        }
+
+        cont = cont / pointVector.size();
+        qDebug() << cont;
+
+        errorY.append(double(cont));
+        errorX.append(count);
+        count++;
+
+        drawLine();
+        plotError();
+        plot();
+
+    }
+
 }
