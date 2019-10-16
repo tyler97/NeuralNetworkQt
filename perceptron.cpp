@@ -7,9 +7,9 @@ const double euler = 2.71828182845;
 
 Perceptron::Perceptron()
 {
-    w1 = Gen.bounded(20.0) - 10.0;
-    w2 = Gen.bounded(20.0) - 10.0;
-    wb = Gen.bounded(20.0) - 10.0;
+    w1 =Gen.bounded(10.0) - 5.0;
+    w2 =Gen.bounded(10.0) - 5.0;
+    wb =Gen.bounded(10.0) - 5.0;
 }
 
 int Perceptron::functionZ(double x1, double x2)
@@ -24,15 +24,16 @@ int Perceptron::functionZ(double x1, double x2)
 
 double Perceptron::functionS(double x1, double x2)
 {
-    double z = (w1*x1) + (w2*x2) - wb;
+    double sumz = (w1*x1) + (w2*x2) - wb;
     //qDebug() <<  (1.0/(1.0 + qPow(euler,z*(-1.0))));
-    return (1.0/(1.0 + qPow(euler,z*(-1.0))));
+    double sig =  (1.0/(1.0 + qPow(euler,sumz*(-1.0))));
+    return sig;
 }
 
 void Perceptron::rand(){
-    w1 = Gen.bounded(20.0) - 10.0;
-    w2 = Gen.bounded(20.0) - 10.0;
-    wb = Gen.bounded(20.0) - 10.0;
+    w1 =Gen.bounded(10.0) - 5.0;
+    w2 =Gen.bounded(10.0) - 5.0;
+    wb =Gen.bounded(10.0) - 5.0;
 }
 
 void Perceptron::update(Point i,double factor,int error){

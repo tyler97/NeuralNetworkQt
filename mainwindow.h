@@ -4,6 +4,9 @@
 #include <QMainWindow>
 #include "point.h"
 #include "perceptron.h"
+#include <nn.h>
+#include <QButtonGroup>
+#include <QCheckBox>
 
 namespace Ui {
 class MainWindow;
@@ -22,8 +25,10 @@ public:
     void clearData();
     void plot();
 
+    std::vector<double> CreateVect(int cl);
+    void Clean();
+    int getMax(const std::vector<double> &vect);
 private slots:
-    void makePlot();
     void clickedGraph(QMouseEvent *event);
 
     void on_btnInit_clicked();
@@ -34,12 +39,18 @@ private slots:
 
     void on_btnCorrer2_clicked();
 
+    void on_btnTrain_clicked();
+
+    void on_btnPrint_clicked();
+
 private:
 
     Ui::MainWindow *ui;
-    QVector<double> qv_x1, qv_y1;
-    QVector<double> qv_x2, qv_y2;
-    QVector<double> errorY, errorX;
+    NN Network;
+    std::vector<QColor> myColors;
+    QButtonGroup Buttons;
+    std::vector<QCheckBox*> CheckList;
+
     int count;
     Perceptron percept;
     QVector<Point> pointVector;

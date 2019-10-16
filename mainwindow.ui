@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>639</width>
+    <width>849</width>
     <height>401</height>
    </rect>
   </property>
@@ -34,20 +34,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>Initializar Pesos</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="btnCorrer">
-    <property name="geometry">
-     <rect>
-      <x>440</x>
-      <y>50</y>
-      <width>131</width>
-      <height>23</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Perceptron</string>
+     <string>Crear Red</string>
     </property>
    </widget>
    <widget class="QCustomPlot" name="errorPlot" native="true">
@@ -76,9 +63,9 @@
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
-      <x>400</x>
+      <x>440</x>
       <y>120</y>
-      <width>91</width>
+      <width>121</width>
       <height>16</height>
      </rect>
     </property>
@@ -89,22 +76,22 @@
    <widget class="QLabel" name="label_2">
     <property name="geometry">
      <rect>
-      <x>400</x>
+      <x>440</x>
       <y>150</y>
-      <width>91</width>
-      <height>16</height>
+      <width>111</width>
+      <height>20</height>
      </rect>
     </property>
     <property name="text">
-     <string>                  factor</string>
+     <string>factor</string>
     </property>
    </widget>
    <widget class="QLineEdit" name="inputG">
     <property name="geometry">
      <rect>
-      <x>490</x>
+      <x>590</x>
       <y>120</y>
-      <width>113</width>
+      <width>121</width>
       <height>20</height>
      </rect>
     </property>
@@ -112,24 +99,117 @@
    <widget class="QLineEdit" name="inputF">
     <property name="geometry">
      <rect>
-      <x>490</x>
+      <x>590</x>
       <y>150</y>
-      <width>113</width>
+      <width>121</width>
       <height>20</height>
      </rect>
     </property>
    </widget>
-   <widget class="QPushButton" name="btnCorrer2">
+   <widget class="QLabel" name="label_3">
     <property name="geometry">
      <rect>
       <x>440</x>
-      <y>200</y>
-      <width>131</width>
-      <height>23</height>
+      <y>180</y>
+      <width>111</width>
+      <height>20</height>
      </rect>
     </property>
     <property name="text">
-     <string>Adaline</string>
+     <string>Error Minimo</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="inputE">
+    <property name="geometry">
+     <rect>
+      <x>590</x>
+      <y>180</y>
+      <width>121</width>
+      <height>20</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_4">
+    <property name="geometry">
+     <rect>
+      <x>440</x>
+      <y>210</y>
+      <width>121</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string># clases</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_5">
+    <property name="geometry">
+     <rect>
+      <x>440</x>
+      <y>240</y>
+      <width>121</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>arquitectura</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="inputC">
+    <property name="geometry">
+     <rect>
+      <x>590</x>
+      <y>210</y>
+      <width>121</width>
+      <height>20</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="inputA">
+    <property name="geometry">
+     <rect>
+      <x>590</x>
+      <y>240</y>
+      <width>121</width>
+      <height>20</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QWidget" name="gridLayoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>720</x>
+      <y>20</y>
+      <width>121</width>
+      <height>311</height>
+     </rect>
+    </property>
+    <layout class="QGridLayout" name="gridLayout"/>
+   </widget>
+   <widget class="QPushButton" name="btnTrain">
+    <property name="geometry">
+     <rect>
+      <x>440</x>
+      <y>50</y>
+      <width>131</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Entrenar</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btnPrint">
+    <property name="geometry">
+     <rect>
+      <x>580</x>
+      <y>20</y>
+      <width>131</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Imprimir</string>
     </property>
    </widget>
   </widget>
@@ -138,8 +218,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>639</width>
-     <height>21</height>
+     <width>849</width>
+     <height>17</height>
     </rect>
    </property>
   </widget>

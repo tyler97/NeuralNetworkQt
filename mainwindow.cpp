@@ -1,6 +1,13 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include <QFile>
+#include <QStringList>
 #include <QThread>
+
+double sigmoid(double x){
+    double t = 1 / (1 + qPow(2.71828182,x * -1.0));
+    return t;
+}
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -9,32 +16,22 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     connect(ui->customPlot, SIGNAL(mousePress(QMouseEvent* )), SLOT(clickedGraph(QMouseEvent*)));
 
-    //Init errorX
     count = 0;
+    Buttons.setExclusive(true);
+    ui->customPlot->xAxis->setRange(-1,1);
+    ui->customPlot->yAxis->setRange(-1,1);
+    ui->inputA->setText("3,4");
+    ui->inputC->setText("5");
+    ui->inputE->setText("0.2");
+    ui->inputF->setText("0.4");
+    ui->inputG->setText("500");
 
-    // first set
-    ui->customPlot->addGraph();
-    ui->customPlot->graph(0)->setScatterStyle(QCPScatterStyle::ssCross);
-    ui->customPlot->graph(0)->setLineStyle(QCPGraph::lsNone);
+    Network.setFunction(sigmoid);
 
-    //second set
-    ui->customPlot->addGraph();
-    ui->customPlot->graph(1)->setScatterStyle(QCPScatterStyle::ssDisc);
-    ui->customPlot->graph(1)->setLineStyle(QCPGraph::lsNone);
-
-    //line
-    ui->customPlot->addGraph();
-    ui->customPlot->graph(2)->setLineStyle(QCPGraph::lsLine);
-
-    //setting range
-    ui->customPlot->xAxis->setRange(-10, 10);
-    ui->customPlot->yAxis->setRange(-10, 10);
-
-    // error graph
-    ui->errorPlot->addGraph();
-    ui->errorPlot->xAxis->setRange(0,200);
-    ui->errorPlot->yAxis->setRange(0,5);
-
+    myColors = {QColor(255,0,0),QColor(255,128,0),QColor(255,255,0),
+              QColor(128,255,0),QColor(0,255,255),QColor(0,128,255),
+              QColor(0,0,255),QColor(127,0,255),QColor(255,0,255),
+              QColor(255,0,127),QColor(128,128,128),QColor(204,255,229)};
 
 
 }
@@ -53,210 +50,165 @@ void MainWindow::delay()
 
 void MainWindow::addPoint(Point p)
 {
-    if(p.Class == 1){
-        qv_x1.append(p.x);
-        qv_y1.append(p.y);
-    }else{
-        qv_x2.append(p.x);
-        qv_y2.append(p.y);
+
+    if(p.Class == -1){
+        return;
     }
+    ui->customPlot->graph(p.Class)->addData(p.x,p.y);
     pointVector.append(p);
 
 }
 
 void MainWindow::clearData()
 {
-    ui->customPlot->graph(0)->data()->clear();
-    ui->customPlot->graph(1)->data()->clear();
-    ui->customPlot->graph(2)->data()->clear();
 
-    ui->customPlot->replot();
-    ui->customPlot->update();
-
-    qv_x1.clear();
-    qv_x2.clear();
-
-    qv_y1.clear();
-    qv_y2.clear();
-
-    pointVector.clear();
-    clearError();
 
 }
 
 void MainWindow::clearError(){
-    ui->errorPlot->graph(0)->data()->clear();
-    ui->errorPlot->replot();
-    ui->errorPlot->update();
 
-    errorX.clear();
-    errorY.clear();
-    count = 0;
 }
 
 void MainWindow::plot()
 {
-    ui->customPlot->graph(0)->setData(qv_x1,qv_y1);
-    ui->customPlot->graph(1)->setData(qv_x2,qv_y2);
-    ui->customPlot->replot();
-    ui->customPlot->update();
+
 }
 
 void MainWindow::drawLine(){
-    QVector<double> x,y;
-    double y1,y2;
 
-    y1 = ((10 * percept.w1) + (percept.wb)) / percept.w2;
-    y2 = ((-10 * percept.w1) + (percept.wb)) / percept.w2;
-
-    x.append(-10.0);
-    x.append(10);
-
-    y.append(y1);
-    y.append(y2);
-
-    ui->customPlot->graph(2)->setData(x,y);
 }
-
-void MainWindow::makePlot(){
-    // generate some data:
-    QVector<double> x(101), y(101); // initialize with entries 0..100
-    for (int i=0; i<101; ++i)
-    {
-      x[i] = i/5.0 - 1; // x goes from -1 to 1
-      y[i] = x[i]*x[i]; // let's plot a quadratic function
-    }
-    // create graph and assign data to it:
-    ui->customPlot->addGraph();
-    ui->customPlot->graph(0)->setData(x, y);
-    // give the axes some labels:
-    //ui->customPlot->xAxis->setLabel("x");
-    //ui->customPlot->yAxis->setLabel("y");
-    // set axes ranges, so we see all data:
-    ui->customPlot->xAxis->setRange(-10, 10);
-    ui->customPlot->yAxis->setRange(-10, 10);
-    ui->customPlot->replot();
-}
-
 
 
 void MainWindow::clickedGraph(QMouseEvent *event)
 {
     QPoint point = event->pos();
-    int Cl = -1;
-    if(event->buttons() == Qt::RightButton){
-        Cl = 0;
-    }else if(event->buttons() == Qt::LeftButton){
-        Cl = 1;
-    }
+    Point myPoint(ui->customPlot->xAxis->pixelToCoord(point.x()),
+                  ui->customPlot->yAxis->pixelToCoord(point.y()),Buttons.checkedId());
 
-    Point myPoint(ui->customPlot->xAxis->pixelToCoord(point.x()),ui->customPlot->yAxis->pixelToCoord(point.y()),Cl);
     addPoint(myPoint);
-    plot();
-
+    ui->customPlot->replot();
 }
 
 void MainWindow::on_btnInit_clicked()
 {
-    percept.rand();
-    drawLine();
-    plot();
+
+    Clean();
+
+    //initializing network
+    std::vector<int> temp;
+    ui->customPlot->clearGraphs();
+    temp.push_back(2);
+    QStringList nodeList = ui->inputA->text().split(",");
+    for(const QString& i : nodeList){
+        if(i.toInt() != 0){
+              temp.push_back(i.toInt());
+        }
+    }
+    temp.push_back(ui->inputC->text().toInt());
+
+    Network.CreateRed(temp);
+
+    //initializing class checkboxes
+    QCheckBox* ch;
+    QPen myPen;
+    for(int i = 0; i < temp[temp.size() - 1]; i++){
+
+        //Class checkbox
+        ch = new QCheckBox(QString("Clase %1").arg(i),this);
+        ui->gridLayout->addWidget(ch,i,0);
+        CheckList.push_back(ch);
+
+
+        //creating graphs for classes
+        myPen.setColor(myColors[unsigned(i)]);
+        ui->customPlot->addGraph();
+        ui->customPlot->graph(i)->setLineStyle(QCPGraph::lsNone);
+        ui->customPlot->graph(i)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssDisc,2));
+        ui->customPlot->graph(i)->setPen(myPen);
+
+    }
+
+    for(unsigned int i = 0; i < CheckList.size(); i++){
+        Buttons.addButton(CheckList[i],int(i));
+    }
+
+    std::cout << ui->customPlot->graphCount() << std::endl;
+
+    this->update();
 }
 
 void MainWindow::plotError(){
 
-    ui->errorPlot->graph(0)->setData(errorX,errorY);
-    ui->errorPlot->replot();
-    ui->errorPlot->update();
+
 }
 
-void MainWindow::on_btnCorrer_clicked()
-{
-    clearError();
-    QString fString = ui->inputF->text();
-    QString GS = ui->inputG->text();
-
-    double factor = fString.toDouble();
-    int G = GS.toInt();
-
-    ui->errorPlot->xAxis->setRange(0,G);
-
-    bool done = false;
-    int error;
-    int cont;
-    for(int r = 0; r < G; r++){
-        done = true;
-        cont = 0;
-
-        for(int i=0; i < pointVector.size(); i++){
-            error = pointVector[i].Class - percept.functionZ(pointVector[i].x,pointVector[i].y);
-            if(error != 0){
-                done = false;
-                percept.update(pointVector[i],factor,error);
-                cont += error * error;
-            }
-        }
-
-        errorY.append(double(cont));
-        errorX.append(count);
-        count++;
-
-        drawLine();
-        plotError();
-        plot();
-        //QThread::sleep(1);
-
-        if(done){
-            break;
-        }
-
-    }
+std::vector<double> MainWindow::CreateVect(int cl){
+    std::vector<double> temp(CheckList.size(),0);
+    temp[unsigned(cl)] = 1.0;
+    return temp;
 
 }
 
 void MainWindow::on_btnClean_clicked()
 {
-    clearData();
+    Clean();
 }
 
-void MainWindow::on_btnCorrer2_clicked()
-{
-    clearError();
-    QString fString = ui->inputF->text();
-    QString GS = ui->inputG->text();
+void MainWindow::Clean(){
 
-    double factor = fString.toDouble();
-    int G = GS.toInt();
+    //Cleaning graph
+    ui->customPlot->clearGraphs();
+    ui->customPlot->replot();
 
-    ui->errorPlot->xAxis->setRange(0,G);
-
-    double error;
-    double cont;
-    for(int r = 0; r < G; r++){
-
-        cont = 0.0;
-
-        for(int i=0; i < pointVector.size(); i++){
-
-            //qDebug() << percept.functionS(pointVector[i].x,pointVector[i].y);
-            error = double(pointVector[i].Class) - percept.functionS(pointVector[i].x,pointVector[i].y);
-            percept.updateA(pointVector[i],factor,error);
-            //qDebug() << error;
-            cont += error * error;
-
-        }
-
-        cont = cont / pointVector.size();
-        qDebug() << cont;
-
-        errorY.append(double(cont));
-        errorX.append(count);
-        count++;
-
-        drawLine();
-        plotError();
-        plot();
+    //Cleaning buttons
+    for(auto i : CheckList){
+        Buttons.removeButton(i);
+        ui->gridLayout->removeWidget(i);
+        delete i;
 
     }
 
+    CheckList.clear();
+
+    pointVector.clear();
+
+    this->update();
+
+}
+
+int MainWindow::getMax(const std::vector<double>& vect){
+    double max = 0.0;
+    int pos = 0;
+    for(unsigned int i = 0; i < vect.size(); i++){
+        if(vect[i] > max){
+            max = vect[i];
+            pos = int(i);
+        }
+    }
+    return pos;
+}
+
+void MainWindow::on_btnTrain_clicked()
+{
+    int N = ui->inputG->text().toInt();
+    double f = ui->inputF->text().toDouble();
+
+    for(int i = 0; i < N; i++){
+        for(const Point& j : pointVector){
+
+            Network.Delta(Network.FeedForward({j.x,j.y}),CreateVect(j.Class),f);
+
+        }
+    }
+}
+
+void MainWindow::on_btnPrint_clicked()
+{
+    for(double i = -1.0; i < 1.0; i+=0.01){
+        for(double j = -1.0; j < 1.0; j+=0.01){
+            Point temp(i,j,getMax(Network.FeedForward({i,j})));
+            addPoint(temp);
+        }
+    }
+    ui->customPlot->replot();
 }
