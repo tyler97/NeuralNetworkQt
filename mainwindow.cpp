@@ -16,23 +16,26 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     connect(ui->customPlot, SIGNAL(mousePress(QMouseEvent* )), SLOT(clickedGraph(QMouseEvent*)));
 
-    count = 0;
+    myColors = {QColor(128,0,0),QColor(170,110,0),QColor(0,0,128),
+              QColor(128,128,0),QColor(230, 25, 75),QColor(128, 128, 128),
+              QColor(0, 0, 0),QColor(0, 128, 128),QColor(255,0,255),
+              QColor(255,0,127),QColor(128,128,128),QColor(204,255,229)};
+
     Buttons.setExclusive(true);
     ui->customPlot->xAxis->setRange(-1,1);
     ui->customPlot->yAxis->setRange(-1,1);
-    ui->inputA->setText("3,4");
-    ui->inputC->setText("5");
-    ui->inputE->setText("0.2");
-    ui->inputF->setText("0.4");
-    ui->inputG->setText("500");
+
+    ui->errorPlot->addGraph();
+    ui->errorPlot->graph(0)->setLineStyle(QCPGraph::lsLine);
+    ui->errorPlot->graph(0)->setPen(QPen(myColors[0]));
+
+    ui->inputA->setText("8");
+    ui->inputC->setText("3");
+    ui->inputE->setText("0.01");
+    ui->inputF->setText("0.1");
+    ui->inputG->setText("1000");
 
     Network.setFunction(sigmoid);
-
-    myColors = {QColor(255,0,0),QColor(255,128,0),QColor(255,255,0),
-              QColor(128,255,0),QColor(0,255,255),QColor(0,128,255),
-              QColor(0,0,255),QColor(127,0,255),QColor(255,0,255),
-              QColor(255,0,127),QColor(128,128,128),QColor(204,255,229)};
-
 
 }
 
@@ -59,26 +62,6 @@ void MainWindow::addPoint(Point p)
 
 }
 
-void MainWindow::clearData()
-{
-
-
-}
-
-void MainWindow::clearError(){
-
-}
-
-void MainWindow::plot()
-{
-
-}
-
-void MainWindow::drawLine(){
-
-}
-
-
 void MainWindow::clickedGraph(QMouseEvent *event)
 {
     QPoint point = event->pos();
@@ -94,10 +77,11 @@ void MainWindow::on_btnInit_clicked()
 
     Clean();
 
-    //initializing network
+    //Initializing network
     std::vector<int> temp;
-    ui->customPlot->clearGraphs();
-    temp.push_back(2);
+    temp.push_back(2); //Input layer will always be 2-dimensional
+
+
     QStringList nodeList = ui->inputA->text().split(",");
     for(const QString& i : nodeList){
         if(i.toInt() != 0){
@@ -107,11 +91,17 @@ void MainWindow::on_btnInit_clicked()
     temp.push_back(ui->inputC->text().toInt());
 
     Network.CreateRed(temp);
+    InitCheckBoxes(temp[temp.size() - 1]);
 
+    this->update();
+}
+
+void MainWindow::InitCheckBoxes(const int& size)
+{
     //initializing class checkboxes
     QCheckBox* ch;
     QPen myPen;
-    for(int i = 0; i < temp[temp.size() - 1]; i++){
+    for(int i = 0; i < size; i++){
 
         //Class checkbox
         ch = new QCheckBox(QString("Clase %1").arg(i),this);
@@ -123,7 +113,7 @@ void MainWindow::on_btnInit_clicked()
         myPen.setColor(myColors[unsigned(i)]);
         ui->customPlot->addGraph();
         ui->customPlot->graph(i)->setLineStyle(QCPGraph::lsNone);
-        ui->customPlot->graph(i)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssDisc,2));
+        ui->customPlot->graph(i)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssDisc,4));
         ui->customPlot->graph(i)->setPen(myPen);
 
     }
@@ -131,14 +121,13 @@ void MainWindow::on_btnInit_clicked()
     for(unsigned int i = 0; i < CheckList.size(); i++){
         Buttons.addButton(CheckList[i],int(i));
     }
-
-    std::cout << ui->customPlot->graphCount() << std::endl;
-
-    this->update();
 }
 
-void MainWindow::plotError(){
+void MainWindow::plotError(const int& N,const double& error){
 
+    ui->errorPlot->graph()->addData(double(N),error);
+    ui->errorPlot->replot();
+    this->update();
 
 }
 
@@ -157,6 +146,9 @@ void MainWindow::on_btnClean_clicked()
 void MainWindow::Clean(){
 
     //Cleaning graph
+    ui->errorPlot->graph()->setData({},{});
+    ui->errorPlot->replot();
+
     ui->customPlot->clearGraphs();
     ui->customPlot->replot();
 
@@ -192,14 +184,30 @@ void MainWindow::on_btnTrain_clicked()
 {
     int N = ui->inputG->text().toInt();
     double f = ui->inputF->text().toDouble();
+    double error = 0.0;
+
+    ui->errorPlot->xAxis->setRange(0,N);
+    ui->errorPlot->yAxis->setRange(0,0.5);
 
     for(int i = 0; i < N; i++){
         for(const Point& j : pointVector){
 
-            Network.Delta(Network.FeedForward({j.x,j.y}),CreateVect(j.Class),f);
+            std::vector<double> temp = Network.FeedForward({j.x,j.y});
+            error += qPow(1 - temp[unsigned(j.Class)],2);
+            Network.Delta(temp,CreateVect(j.Class),f);
 
         }
+
+        error /= double(pointVector.size());
+        plotError(i,error);
+
+        if(error <= ui->inputE->text().toDouble())
+        {
+            break;
+        }
+
     }
+        ui->errorPlot->replot();
 }
 
 void MainWindow::on_btnPrint_clicked()

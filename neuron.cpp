@@ -1,23 +1,13 @@
 #include "neuron.h"
 
-const double euler = 2.71828182845;
-
-Neuron::Neuron()
+Neuron::Neuron(int size, std::random_device* gen)
 {
-    //w1 =Gen.bounded(10.0) - 5.0;
-    //w2 =Gen.bounded(10.0) - 5.0;
-    //wb =Gen.bounded(10.0) - 5.0;
-
-}
-
-Neuron::Neuron(int size,int& count)
-{
-
-    for(int i = 0; i < size; i++){
-        weights.push_back(count);
-        count++;
+    generator = gen;
+    std::uniform_real_distribution<double> dist(-1.0,1.0);
+    for(int i = 0; i < size+1; i++){
+        weights.push_back(dist(*generator));
     }
-    weights.push_back(1);
+
     Z = 0;
     FZ = 0;
     delt = 0;
@@ -94,21 +84,6 @@ void Neuron::rand(){
     }
 }
 
-Neuron::Neuron(int size, std::random_device* gen)
-{
-    generator = gen;
-    std::uniform_real_distribution<double> dist(-1.0,1.0);
-    for(int i = 0; i < size+1; i++){
-        weights.push_back(dist(*generator));
-    }
-
-    Z = 0;
-    FZ = 0;
-    delt = 0;
-
-}
-
-
 std::ostream& operator<<(std::ostream& os, const Neuron& dt)
 {
     if(dt.weights.size() < 1){
@@ -123,32 +98,4 @@ std::ostream& operator<<(std::ostream& os, const Neuron& dt)
     os << " Delta: " << dt.delt;
     os << std::endl;
     return os;
-}
-
-void Neuron::update(std::vector<double> x,double factor,int error){
-
-    if(x.size() != weights.size()){
-        throw "Neuron: Error weights and data not the same size - update()";
-    }
-
-    for(unsigned int i = 0; i < x.size(); i++){
-        weights[i] += x[i] * factor * error;
-    }
-
-}
-
-void Neuron::updateA(std::vector<double> x, double factor, double error, double(*point)(double i))
-{
-
-    if(point == nullptr){
-        throw "Error";
-    }
-
-    double z = activate(x,point);
-    z = z * (1 - z);
-
-    for(unsigned int i = 0; i < x.size(); i++){
-        weights[i] += x[i] * factor * error * z;
-    }
-
 }

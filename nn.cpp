@@ -65,16 +65,16 @@ void NN::Delta(const std::vector<double>& data,const std::vector<double>& test,c
         error.push_back(test[i] - data[i]);
     }
 
-    for(int i = layers.size()-1; i >= 0; i--){
+    for(int i = int(layers.size()-1); i >= 0; i--){
 
-        for(unsigned int j = 0; j < layers[i].size(); j++){
+        for(unsigned int j = 0; j < layers[unsigned(i)].size(); j++){
 
             if(!error.empty()){
-                temp.push_back(layers[i].at(j).delta(error[j],0,factor));
+                temp.push_back(layers[unsigned(i)].at(j).delta(error[j],0,factor));
 
             }else{
 
-                temp.push_back(layers[i].at(j).delta(0,delta[j],factor));
+                temp.push_back(layers[unsigned(i)].at(j).delta(0,delta[j],factor));
 
             }
 
@@ -85,11 +85,11 @@ void NN::Delta(const std::vector<double>& data,const std::vector<double>& test,c
         }
 
         delta.clear(); // calculating deltas
-        for(int t = 0; t < temp[0].size(); t++){
+        for(int t = 0; t < int(temp[0].size()); t++){
             double count = 0;
             for(unsigned int k = 0; k < temp.size(); k++){
 
-                count += temp[k].at(t);
+                count += temp[k].at(unsigned(t));
 
             }
             delta.push_back(count);
@@ -127,7 +127,7 @@ void NN::CreateRed(const std::vector<int>&nodes){
 
     layers.clear();
     //int count = 1;
-    Size = nodes[0];
+    Size = unsigned(nodes[0]);
 
 
     std::random_device count;
@@ -168,10 +168,10 @@ void NN::Print(){
 
         for(unsigned int i = 0; i < layers.size(); i++){
 
-            std::cout << "Capa - " << i << std::endl << std::endl;
+            std::cout << "Layer: " << i << std::endl << std::endl;
             for(unsigned int j = 0; j < layers[i].size(); j++){
 
-                std::cout << "Neurona " << j << layers[i].at(j) << std::endl;
+                std::cout << "Neuron: " << j << layers[i].at(j) << std::endl;
 
             }
 
@@ -188,6 +188,6 @@ int NN::DataInputSize(){
     if(isEmpty()){
         throw "NN: Error Neural Net is Empty DataInputSize()";
     }
-    return layers[0].at(0).weights.size() - 1;
+    return int(layers[0].at(0).weights.size() - 1);
 
 }

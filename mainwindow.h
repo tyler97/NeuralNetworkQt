@@ -3,7 +3,6 @@
 
 #include <QMainWindow>
 #include "point.h"
-#include "perceptron.h"
 #include <nn.h>
 #include <QButtonGroup>
 #include <QCheckBox>
@@ -28,16 +27,13 @@ public:
     std::vector<double> CreateVect(int cl);
     void Clean();
     int getMax(const std::vector<double> &vect);
+    void plotError(const int &N, const double &error);
 private slots:
     void clickedGraph(QMouseEvent *event);
 
     void on_btnInit_clicked();
 
-    void on_btnCorrer_clicked();
-
     void on_btnClean_clicked();
-
-    void on_btnCorrer2_clicked();
 
     void on_btnTrain_clicked();
 
@@ -51,13 +47,12 @@ private:
     QButtonGroup Buttons;
     std::vector<QCheckBox*> CheckList;
 
-    int count;
-    Perceptron percept;
     QVector<Point> pointVector;
     void drawLine();
     void delay();
     void plotError();
     void clearError();
+    void InitCheckBoxes(const int&);
 };
 
 #endif // MAINWINDOW_H
